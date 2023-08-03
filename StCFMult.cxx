@@ -81,8 +81,16 @@ bool StCFMult::make(StPicoDst *picoDst){
 
         if (
             (nHitsDedx > 5 || mass2 > -990) &&
-            ((nHitsDedx > 5 && nsig < -3) || (mass2 > -990 && mass2 < 0.4))
-        ) {
+            nsig < -3 &&
+            mass2 < 0.4
+        ) { 
+            /*
+                Important note for this cut: - From Fan Si
+                    If nHitsDedx is less than 5, dE/dx quantity would fail to be calculated, 
+                    and nSigmaProton will be negative infty and set to be -32768,
+                    from getter of nSigmaProton, it will be -32.768 and naturally less than -3.
+                    If one is not aware of this mechanism, he/she can not understand the logic here.
+            */
             mRefMult3 += 1;
         }
         if (beta > 0.1){
