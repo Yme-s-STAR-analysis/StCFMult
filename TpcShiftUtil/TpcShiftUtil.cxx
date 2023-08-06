@@ -40,10 +40,10 @@ double TpcShiftUtil::GetShift(double p) {
 }
 
 double TpcShiftUtil::GetShift(double pT, double y) {
-    if (y > shift2D->GetXaxis()->GetXmax() || y < shift2D->GetXaxis()->GetXmax()) {
+    if (y > shift2D->GetXaxis()->GetXmax() || y < shift2D->GetXaxis()->GetXmin()) {
         return 0;
     }
-    if (pT > shift2D->GetYaxis()->GetXmax() || pT < shift2D->GetYaxis()->GetXmax()) {
+    if (pT > shift2D->GetYaxis()->GetXmax() || pT < shift2D->GetYaxis()->GetXmin()) {
         return 0;
     }
     return shift2D->GetBinContent(
