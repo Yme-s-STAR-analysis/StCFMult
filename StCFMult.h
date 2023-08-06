@@ -25,7 +25,8 @@
 #include "StThreeVectorF.hh"
 #include "StPicoEvent/StPicoBTofPidTraits.h"
 
-#include "ShiftUtil.h"
+// #include "ShiftUtil.h"
+#include "TpcShiftUtil/TpcShiftUtil.h"
 
 class StCFMult{
     public:
@@ -35,9 +36,9 @@ class StCFMult{
         Int_t mNTofMatch;
         Int_t mTofMult;
 
-        ShiftUtil* shift;
+        TpcShiftUtil* shift;
 
-        StCFMult();
+        StCFMult(TpcShiftUtil* shift_ptr);
         ~StCFMult(){}
 
         void clean();

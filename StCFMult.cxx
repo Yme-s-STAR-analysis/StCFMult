@@ -1,13 +1,13 @@
 #include "StCFMult.h"
+#include "TMath.h"
 
-StCFMult::StCFMult(){
+StCFMult::StCFMult(TpcShiftUtil* shift_ptr){
     mRefMult3 = 0;
     mBetaEta1 = 0;
     mNTofMatch = 0;
     mTofMult = 0;
-    shift = new ShiftUtil();
+    shift = shift_ptr;
 }
-~StCFMult::StCFMult(){}
 
 void StCFMult::clean(){
     mRefMult3 = 0;
@@ -51,6 +51,10 @@ bool StCFMult::make(StPicoDst *picoDst){
 
         TVector3 pmomentum = picoTrack->pMom();
         Double_t pcm = pmomentum.Mag();
+        Double_t pt = pmomentum.Perp();
+        Double_t pz = pmomentum.Z();
+        Double_t EP = sqrt(pcm*pcm + 0.938272*0.938272);
+        Double_t YP = 0.5 * TMath::Log((EP+pz) / (EP-pz));
         if (pcm < 1e-10){
             continue;
         }
@@ -62,7 +66,11 @@ bool StCFMult::make(StPicoDst *picoDst){
         Int_t q = picoTrack->charge();
         Double_t nsig = picoTrack->nSigmaProton();
         // use selected n sigma shift member function
-        nsig -= shift->GetShift(p);
+        if (0.4 < pt && pt < 2.0 && fabs(YP) < 0.5) {
+            nsig -= shift->GetShift(pt, YP);
+        } else {
+            nsig -= shift->GetShift(pcm);
+        }
 
         Int_t tofId = picoTrack->bTofPidTraitsIndex();
         Int_t btofMatchFlag = 0;
