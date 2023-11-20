@@ -2,7 +2,7 @@
 #define __STCFMULT_HEADER__
 
 /*
-    Version: 1.0
+    Version: 2.0
     Author: Yige HUANG
     StCFMult module:
         For picoDst only.
@@ -25,24 +25,28 @@
 #include "StThreeVectorF.hh"
 #include "StPicoEvent/StPicoBTofPidTraits.h"
 
-// #include "ShiftUtil.h"
-#include "TpcShiftUtil/TpcShiftUtil.h"
+#include "TpcShiftTool/TpcShiftTool.h"
 
 class StCFMult{
     public:
 
+        Int_t mRefMult;
         Int_t mRefMult3;
-        Int_t mBetaEta1;
+        Int_t mRefMult3X;
+        Int_t mNTofBeta;
         Int_t mNTofMatch;
+        Int_t mNTofMatchZ;
         Int_t mTofMult;
 
         TpcShiftUtil* shift;
 
-        StCFMult(TpcShiftUtil* shift_ptr);
+        StCFMult();
         ~StCFMult(){}
 
         void clean();
         
+        void ImportShiftTool(TpcShiftUtil* shift_ptr);
+        void IgnoreShift();
         bool make(StPicoDst *picoDst);
 };
 
