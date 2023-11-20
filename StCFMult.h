@@ -38,7 +38,7 @@ class StCFMult{
         Int_t mNTofMatchZ;
         Int_t mTofMult;
 
-        TpcShiftUtil* shift;
+        TpcShiftTool* shift;
 
         StCFMult();
         ~StCFMult(){}
