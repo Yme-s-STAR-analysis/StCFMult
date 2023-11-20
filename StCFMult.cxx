@@ -16,7 +16,7 @@ void StCFMult::clean() {
     mTofMult = 0;
 }
 
-void StCFMult::ImportShiftTool(TpcShiftUtil* shift_ptr) {
+void StCFMult::ImportShiftTool(TpcShiftTool* shift_ptr) {
     shift = shift_ptr;
 }
 

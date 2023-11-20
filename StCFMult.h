@@ -45,7 +45,7 @@ class StCFMult{
 
         void clean();
         
-        void ImportShiftTool(TpcShiftUtil* shift_ptr);
+        void ImportShiftTool(TpcShiftTool* shift_ptr);
         void IgnoreShift();
         bool make(StPicoDst *picoDst);
 };
