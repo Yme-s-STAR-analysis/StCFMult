@@ -1,27 +1,35 @@
 #include "StCFMult.h"
 #include "TMath.h"
 
-StCFMult::StCFMult(TpcShiftUtil* shift_ptr){
+StCFMult::StCFMult() {
+    clean();
+    shift = 0;
+}
+
+void StCFMult::clean() {
+    mRefMult = 0;
     mRefMult3 = 0;
-    mBetaEta1 = 0;
+    mRefMult3X = 0;
+    mNTofBeta = 0;
     mNTofMatch = 0;
+    mNTofMatchZ = 0;
     mTofMult = 0;
+}
+
+void StCFMult::ImportShiftTool(TpcShiftUtil* shift_ptr) {
     shift = shift_ptr;
 }
 
-void StCFMult::clean(){
-    mRefMult3 = 0;
-    mBetaEta1 = 0;
-    mNTofMatch = 0;
-    mTofMult = 0;
+void StCFMult::IgnoreShift() {
+    shift = 0;
 }
 
-bool StCFMult::make(StPicoDst *picoDst){
+bool StCFMult::make(StPicoDst *picoDst) {
     clean();
     Int_t nTracks = picoDst->numberOfTracks();
 
     StPicoEvent* picoEvent = (StPicoEvent*)picoDst->event();
-    if (!picoEvent){
+    if (!picoEvent) {
         return false;
     }
 
@@ -31,21 +39,21 @@ bool StCFMult::make(StPicoDst *picoDst){
     Double_t vy = vertex.Y();
     Double_t vz = vertex.Z();
 
-    for (Int_t iTrack=0; iTrack<nTracks; iTrack++){
+    for (Int_t iTrack=0; iTrack<nTracks; iTrack++) {
         StPicoTrack* picoTrack = (StPicoTrack *)picoDst->track(iTrack);
-        if (!picoTrack || !picoTrack->isPrimary()){
+        if (!picoTrack || !picoTrack->isPrimary()) {
             continue;
         }
 
         Int_t nHitsFit = picoTrack->nHitsFit();
-        if (nHitsFit <= 10){
+        if (nHitsFit <= 10) {
             continue;
         }
 
         Int_t nHitsDedx = picoTrack->nHitsDedx();
 
         Double_t dca = fabs(picoTrack->gDCA(vx, vy, vz));
-        if (dca > 3){
+        if (dca > 3) {
             continue;
         }
 
@@ -55,18 +63,20 @@ bool StCFMult::make(StPicoDst *picoDst){
         Double_t pz = pmomentum.Z();
         Double_t EP = sqrt(pcm*pcm + 0.938272*0.938272);
         Double_t YP = 0.5 * TMath::Log((EP+pz) / (EP-pz));
-        if (pcm < 1e-10){
+        if (pcm < 1e-10) {
             continue;
         }
         Double_t eta = pmomentum.PseudoRapidity();
-        if (fabs(eta) > 1.0){
+        if (fabs(eta) > 1.6) { // for RefMult3X
             continue;
         }
 
         Int_t q = picoTrack->charge();
         Double_t nsig = picoTrack->nSigmaProton();
         // use selected n sigma shift member function
-        if (0.4 < pt && pt < 2.0 && fabs(YP) < 0.5) {
+        if (shift == 0) {
+            nsig = 0;
+        } else if (0.4 < pt && pt < 2.0 && fabs(YP) < 0.5) {
             nsig -= shift->GetShift(pt, YP);
         } else {
             nsig -= shift->GetShift(pcm);
@@ -75,22 +85,23 @@ bool StCFMult::make(StPicoDst *picoDst){
         Int_t tofId = picoTrack->bTofPidTraitsIndex();
         Int_t btofMatchFlag = 0;
         Double_t beta = -1.0;
-        if (tofId >= 0){
+        if (tofId >= 0) {
             StPicoBTofPidTraits* tofPid = picoDst->btofPidTraits(tofId);
             btofMatchFlag = tofPid->btofMatchFlag();
-            if (tofPid){
+            if (tofPid) {
                 beta = tofPid->btofBeta();
             }
         }
         Double_t mass2 = -999;
-        if (btofMatchFlag > 0 && beta > 1e-5){
+        if (btofMatchFlag > 0 && beta > 1e-5) {
             mass2 = pcm * pcm * (pow(1.0 / beta, 2) - 1);
         }
 
         if (
             (nHitsDedx > 5 || mass2 > -990) &&
             nsig < -3 &&
-            mass2 < 0.4
+            mass2 < 0.4 && 
+            fabs(eta) < 1.0
         ) { 
             /*
                 Important note for this cut: - From Fan Si
@@ -101,13 +112,23 @@ bool StCFMult::make(StPicoDst *picoDst){
             */
             mRefMult3 += 1;
         }
-        if (beta > 0.1){
-            mBetaEta1 += 1;
+        if (
+            (nHitsDedx > 5 || mass2 > -990) &&
+            nsig < -3 &&
+            mass2 < 0.4
+        ) { 
+            mRefMult3X += 1;
+        }
+        if (beta > 0.1 && beta < 1.1 && fabs(eta) < 1.0){
+            mNTofBeta += 1;
         }
         if (fabs(eta) < 0.5 && btofMatchFlag > 0){
-            mNTofMatch += 1;
+            mNTofMatchZ += 1;
         }
     }
+
+    mRefMult = picoEvent->refMult();
+    mNTofMatch = picoEvent->nBTOFMatch();
     mTofMult = picoEvent->btofTrayMultiplicity();
     return true;
 }
