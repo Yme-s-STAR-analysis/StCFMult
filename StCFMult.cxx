@@ -17,7 +17,7 @@ void StCFMult::clean() {
 }
 
 void StCFMult::ImportShiftTool(TpcShiftTool* shift_ptr) {
-    shift = shift_ptr;
+    mtShift = shift_ptr;
 }
 
 void StCFMult::IgnoreShift() {
@@ -29,9 +29,7 @@ bool StCFMult::make(StPicoDst *picoDst) {
     Int_t nTracks = picoDst->numberOfTracks();
 
     StPicoEvent* picoEvent = (StPicoEvent*)picoDst->event();
-    if (!picoEvent) {
-        return false;
-    }
+    if (!picoEvent) { return false; }
 
     Int_t runId = picoEvent->runId();
     TVector3 vertex = picoEvent->primaryVertex();
@@ -41,45 +39,24 @@ bool StCFMult::make(StPicoDst *picoDst) {
 
     for (Int_t iTrack=0; iTrack<nTracks; iTrack++) {
         StPicoTrack* picoTrack = (StPicoTrack *)picoDst->track(iTrack);
-        if (!picoTrack || !picoTrack->isPrimary()) {
-            continue;
-        }
+        if (!picoTrack || !picoTrack->isPrimary()) { continue; }
 
         Int_t nHitsFit = picoTrack->nHitsFit();
-        if (nHitsFit <= 10) {
-            continue;
-        }
+        if (nHitsFit <= 10) { continue; }
 
         Int_t nHitsDedx = picoTrack->nHitsDedx();
 
         Double_t dca = fabs(picoTrack->gDCA(vx, vy, vz));
-        if (dca > 3) {
-            continue;
-        }
+        if (dca > 3) { continue; }
 
         TVector3 pmomentum = picoTrack->pMom();
         Double_t pcm = pmomentum.Mag();
         Double_t pt = pmomentum.Perp();
-        Double_t pz = pmomentum.Z();
-        Double_t EP = sqrt(pcm*pcm + 0.938272*0.938272);
-        Double_t YP = 0.5 * TMath::Log((EP+pz) / (EP-pz));
-        if (pcm < 1e-10) {
-            continue;
-        }
+        if (pcm < 1e-10) { continue; }
         Double_t eta = pmomentum.PseudoRapidity();
-        if (fabs(eta) > 1.6) { // for RefMult3X
-            continue;
-        }
-
-        Int_t q = picoTrack->charge();
         Double_t nsig = picoTrack->nSigmaProton();
-        // use selected n sigma shift member function
-        if (shift == 0) {
-            nsig = 0;
-        } else if (0.4 < pt && pt < 2.0 && fabs(YP) < 0.5) {
-            nsig -= shift->GetShift(pt, YP);
-        } else {
-            nsig -= shift->GetShift(pcm);
+        if (shift != 0) { // apply n sigma shift
+            nsig -= shift->GetShift(runId, pt, eta);
         }
 
         Int_t tofId = picoTrack->bTofPidTraitsIndex();
@@ -115,7 +92,8 @@ bool StCFMult::make(StPicoDst *picoDst) {
         if (
             (nHitsDedx > 5 || mass2 > -990) &&
             nsig < -3 &&
-            mass2 < 0.4
+            mass2 < 0.4 &&
+            fabs(eta) < 1.6
         ) { 
             mRefMult3X += 1;
         }

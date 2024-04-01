@@ -6,13 +6,21 @@
 
 ## Usage
 
-1. Include `StCFMult.h`.
+1. Include `StCFMult.h`
 
-2. `StCFMult* multCounter = new StCFMult()`.
+2. `StCFMult* multCounter = new StCFMult()`
 
-3. `if (multCounter->make(mPicoDst)) { refMult3 = multCounter->mRefMult3; }`
+3. Put the pointer of your `TpcShiftTool` into `StCFMult` by calling `ImportShiftTool()` or ignore it by calling `IgnoreShift()`
+
+4. `if (multCounter->make(mPicoDst)) { refMult3 = multCounter->mRefMult3; }`
 
 ## Change Log
+
+01.04.2024 by yghuang (v2.1):
+
+> Since the interfaces of `TpcShiftTool` are changed, multiplicity tool is also changed
+>
+> And some additional changes are also made, may not change the results since the logic there are not changed
 
 20.11.2023 by yghuang (v2.0):
 
