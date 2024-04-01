@@ -2,7 +2,7 @@
 #define __STCFMULT_HEADER__
 
 /*
-    Version: 2.0
+    Version: 2.1
     Author: Yige HUANG
     StCFMult module:
         For picoDst only.
@@ -38,7 +38,7 @@ class StCFMult{
         Int_t mNTofMatchZ;
         Int_t mTofMult;
 
-        TpcShiftTool* shift;
+        TpcShiftTool* mtShift;
 
         StCFMult();
         ~StCFMult(){}
