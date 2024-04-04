@@ -12,7 +12,7 @@ void StCFMult::clean() {
     mRefMult3X = 0;
     mNTofBeta = 0;
     mNTofMatch = 0;
-    mNTofMatchZ = 0;
+    // mNTofMatchZ = 0;
     mTofMult = 0;
 }
 
@@ -97,12 +97,13 @@ bool StCFMult::make(StPicoDst *picoDst) {
         ) { 
             mRefMult3X += 1;
         }
-        if (beta > 0.1 && beta < 1.1 && fabs(eta) < 1.0){
+        // if (beta > 0.1 && beta < 1.1 && fabs(eta) < 0.5) { // according to Ashish's cut
+        if (beta > 0.1 && fabs(eta) < 0.5) { // according to Ashish's cut
             mNTofBeta += 1;
         }
-        if (fabs(eta) < 0.5 && btofMatchFlag > 0){
-            mNTofMatchZ += 1;
-        }
+        // if (fabs(eta) < 0.5 && btofMatchFlag > 0){
+        //     mNTofMatchZ += 1;
+        // }
     }
 
     mRefMult = picoEvent->refMult();
