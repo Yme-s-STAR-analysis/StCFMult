@@ -27,7 +27,7 @@
 
 #include "TpcShiftTool/TpcShiftTool.h"
 
-class StCFMult{
+class StCFMult {
     public:
 
         Int_t mRefMult;
@@ -35,7 +35,7 @@ class StCFMult{
         Int_t mRefMult3X;
         Int_t mNTofBeta;
         Int_t mNTofMatch;
-        Int_t mNTofMatchZ;
+        // Int_t mNTofMatchZ;
         Int_t mTofMult;
 
         TpcShiftTool* mtShift;
