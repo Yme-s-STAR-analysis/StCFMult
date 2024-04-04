@@ -3,7 +3,7 @@
 
 StCFMult::StCFMult() {
     clean();
-    shift = 0;
+    mtShift = 0;
 }
 
 void StCFMult::clean() {
@@ -21,7 +21,7 @@ void StCFMult::ImportShiftTool(TpcShiftTool* shift_ptr) {
 }
 
 void StCFMult::IgnoreShift() {
-    shift = 0;
+    mtShift = 0;
 }
 
 bool StCFMult::make(StPicoDst *picoDst) {
@@ -55,8 +55,8 @@ bool StCFMult::make(StPicoDst *picoDst) {
         if (pcm < 1e-10) { continue; }
         Double_t eta = pmomentum.PseudoRapidity();
         Double_t nsig = picoTrack->nSigmaProton();
-        if (shift != 0) { // apply n sigma shift
-            nsig -= shift->GetShift(runId, pt, eta);
+        if (mtShift != 0) { // apply n sigma shift
+            nsig -= mtShift->GetShift(runId, pt, eta);
         }
 
         Int_t tofId = picoTrack->bTofPidTraitsIndex();
