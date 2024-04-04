@@ -16,6 +16,12 @@
 
 ## Change Log
 
+04.04.2024 by yghuang (v2.2):
+
+> Cancel: nTofMatchZ, we do not need this quantity any more, thanks for your effort!
+>
+> Definition: nTofBeta now would not ask for beta < 1.1, and eta range is limited to 0.5
+
 01.04.2024 by yghuang (v2.1):
 
 > Since the interfaces of `TpcShiftTool` are changed, multiplicity tool is also changed
