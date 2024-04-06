@@ -16,6 +16,10 @@
 
 ## Change Log
 
+04.04.2024 by yghuang (v2.2.1):
+
+> Fix a bug: when load `mtShift`, it was written as `shift`
+
 04.04.2024 by yghuang (v2.2):
 
 > Cancel: nTofMatchZ, we do not need this quantity any more, thanks for your effort!
