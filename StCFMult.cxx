@@ -81,7 +81,7 @@ bool StCFMult::make(StPicoDst *picoDst) {
                     const StThreeVectorF* vtxPosSt = new StThreeVectorF(
                         vx, vy, vz
                     );
-                    Double_t L = tofPathLength(vertexPosSt, btofHitsPosSt, helix.curvature());
+                    Double_t L = tofPathLength(vtxPosSt, btofHitsPosSt, helix.curvature());
                     beta = tof > 0 ? L / (tof * (C_C_LIGHT/1.e9)) : std::numeric_limits<Float_t>::quiet_NaN(); // note: quiet nan will never pass > N or < N
                 }
             }
