@@ -7,11 +7,11 @@
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
 #include "StPicoEvent/StPicoTrack.h"
+#include "StPicoEvent/StPicoPhysicalHelix.h"
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StThreeVectorF.hh"
 #include "StPicoEvent/StPicoBTofPidTraits.h"
 #include "StBTofUtil/tofPathLength.hh"
-#include "StPicoPhysicalHelix.h"
 #include "phys_constants.h"
 
 #include "TpcShiftTool/TpcShiftTool.h"
