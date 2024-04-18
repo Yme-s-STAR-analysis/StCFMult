@@ -1,6 +1,6 @@
 # StCFMult
 
-`version: 2.3`
+`version: 2.3.1`
 
 `author: Yige Huang`
 
@@ -15,6 +15,10 @@
 4. `if (multCounter->make(mPicoDst)) { refMult3 = multCounter->mRefMult3; }`
 
 ## Change Log
+
+18.04.2024 by yghuang (v2.3.1):
+
+> Fix a bug
 
 18.04.2024 by yguang (v2.3):
 
