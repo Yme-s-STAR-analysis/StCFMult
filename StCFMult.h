@@ -1,22 +1,8 @@
 #ifndef __STCFMULT_HEADER__
 #define __STCFMULT_HEADER__
 
-/*
-    Version: 2.1
-    Author: Yige HUANG
-    StCFMult module:
-        For picoDst only.
-        For CF group (especially proton number analysis).
-
-    Demo:
-
-        StCFMult* multCounter = new StCFMult();
-        if (multCounter->make(mPicoDst)) {
-            refMult3 = multCounter->mRefMult3;
-        }
-    
-    Note: I also put the calculation of beta_eta1 and nbTOFMatch in this class.
-*/
+#include <limits>
+#include "TVector3.h"
 
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
@@ -24,6 +10,9 @@
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StThreeVectorF.hh"
 #include "StPicoEvent/StPicoBTofPidTraits.h"
+#include "StBTofUtil/tofPathLength.hh"
+#include "StPicoPhysicalHelix.h"
+#include "phys_constants.h"
 
 #include "TpcShiftTool/TpcShiftTool.h"
 

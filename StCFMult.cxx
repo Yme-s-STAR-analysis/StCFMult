@@ -33,9 +33,10 @@ bool StCFMult::make(StPicoDst *picoDst) {
 
     Int_t runId = picoEvent->runId();
     TVector3 vertex = picoEvent->primaryVertex();
-    Double_t vx = vertex.X();
-    Double_t vy = vertex.Y();
-    Double_t vz = vertex.Z();
+    Float_t vx = vertex.X();
+    Float_t vy = vertex.Y();
+    Float_t vz = vertex.Z();
+    const Float_t mField = picoEvent->bField();
 
     for (Int_t iTrack=0; iTrack<nTracks; iTrack++) {
         StPicoTrack* picoTrack = (StPicoTrack *)picoDst->track(iTrack);
@@ -46,7 +47,9 @@ bool StCFMult::make(StPicoDst *picoDst) {
 
         Int_t nHitsDedx = picoTrack->nHitsDedx();
 
-        Double_t dca = fabs(picoTrack->gDCA(vx, vy, vz));
+        // Double_t dca = fabs(picoTrack->gDCA(vx, vy, vz));
+        StPicoPhysicalHelix helix = picoTrack->helix(mField);
+        Double_t dca = fabs(helix.geometricSignedDistance(vertex));
         if (dca > 3) { continue; }
 
         TVector3 pmomentum = picoTrack->pMom();
@@ -62,15 +65,30 @@ bool StCFMult::make(StPicoDst *picoDst) {
         Int_t tofId = picoTrack->bTofPidTraitsIndex();
         Int_t btofMatchFlag = 0;
         Double_t beta = -1.0;
+        Double_t btofYLocal = -999.0;
         if (tofId >= 0) {
             StPicoBTofPidTraits* tofPid = picoDst->btofPidTraits(tofId);
             btofMatchFlag = tofPid->btofMatchFlag();
             if (tofPid) {
                 beta = tofPid->btofBeta();
+                btofYLocal = tofPid->btofYLocal();
+                if (beta < 1e-4) { // recalculate time of flight
+                    Double_t tof = tofPid->btof();
+                    TVector3 btofHitPos = tofPid->btofHitPos();
+                    const StThreeVectorF* btofHitsPosSt = new StThreeVectorF(
+                        btofHitPos.X(),btofHitPos.Y(),btofHitPos.Z()
+                    );
+                    const StThreeVectorF* vtxPosSt = new StThreeVectorF(
+                        vx, vy, vz
+                    );
+                    Double_t L = tofPathLength(vertexPosSt, btofHitsPosSt, helix.curvature());
+                    beta = tof > 0 ? L / (tof * (C_C_LIGHT/1.e9)) : std::numeric_limits<Float_t>::quiet_NaN(); // note: quiet nan will never pass > N or < N
+                }
             }
         }
         Double_t mass2 = -999;
-        if (btofMatchFlag > 0 && beta > 1e-5) {
+        // if (btofMatchFlag > 0 && beta > 1e-5) {
+        if (btofMatchFlag > 0 && beta > 0 && fabs(btofYLocal) < 1.8) {
             mass2 = pcm * pcm * (pow(1.0 / beta, 2) - 1);
         }
 

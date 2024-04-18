@@ -1,6 +1,6 @@
 # StCFMult
 
-`version: 2.0`
+`version: 2.3`
 
 `author: Yige Huang`
 
@@ -15,6 +15,14 @@
 4. `if (multCounter->make(mPicoDst)) { refMult3 = multCounter->mRefMult3; }`
 
 ## Change Log
+
+18.04.2024 by yguang (v2.3):
+
+> Definition: if bTOF beta is less than 1e-4, we will recalculate it
+>
+    > For more details in the code
+>
+> Definition: now we add TOF local Y cut on mass square calculation
 
 04.04.2024 by yghuang (v2.2.1):
 
