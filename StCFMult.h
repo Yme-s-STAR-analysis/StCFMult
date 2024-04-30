@@ -4,6 +4,7 @@
 #include <limits>
 #include "TVector3.h"
 
+#include "TRandom3.h"
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
 #include "StPicoEvent/StPicoTrack.h"
@@ -22,10 +23,16 @@ class StCFMult {
         Int_t mRefMult;
         Int_t mRefMult3;
         Int_t mRefMult3X;
+        Int_t mRefMult3S;
+        Int_t mRefMult3E;
         Int_t mNTofBeta;
         Int_t mNTofMatch;
         // Int_t mNTofMatchZ;
         Int_t mTofMult;
+
+        TRandom3 rd;
+
+        double mEff; // for RefMult3E
 
         TpcShiftTool* mtShift;
 
@@ -37,6 +44,7 @@ class StCFMult {
         void ImportShiftTool(TpcShiftTool* shift_ptr);
         void IgnoreShift();
         bool make(StPicoDst *picoDst);
+        void SetEfficiencyRefMult3E(double val) { mEff=val; }
 };
 
 #endif

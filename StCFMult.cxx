@@ -4,12 +4,16 @@
 StCFMult::StCFMult() {
     clean();
     mtShift = 0;
+    mEff = 1.0;
+    rd = TRandom3();
 }
 
 void StCFMult::clean() {
     mRefMult = 0;
     mRefMult3 = 0;
     mRefMult3X = 0;
+    mRefMult3S = 0;
+    mRefMult3E = 0;
     mNTofBeta = 0;
     mNTofMatch = 0;
     // mNTofMatchZ = 0;
@@ -115,6 +119,14 @@ bool StCFMult::make(StPicoDst *picoDst) {
         ) { 
             mRefMult3X += 1;
         }
+        if (
+            (nHitsDedx > 5 || mass2 > -990) &&
+            nsig < -3 &&
+            mass2 < 0.4 &&
+            fabs(eta) < 0.5
+        ) { 
+            mRefMult3S += 1;
+        }
         // if (beta > 0.1 && beta < 1.1 && fabs(eta) < 0.5) { // according to Ashish's cut
         if (beta > 0.1 && fabs(eta) < 0.5) { // according to Ashish's cut
             mNTofBeta += 1;
@@ -127,5 +139,7 @@ bool StCFMult::make(StPicoDst *picoDst) {
     mRefMult = picoEvent->refMult();
     mNTofMatch = picoEvent->nBTOFMatch();
     mTofMult = picoEvent->btofTrayMultiplicity();
+    if (mEff == 1.0) { mRefMult3E = mRefMult3; }
+    else { mRefMult3E = rd.Binomial(mRefMult3, mEff); }
     return true;
 }
